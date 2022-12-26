@@ -7,25 +7,14 @@ class StringCalculator
     public function calculate(string $argument): int
     {
         $matches = explode(' ', $argument);
-        var_dump($matches);
         if (!$this->validateString($matches)) {
             throw new \InvalidArgumentException();
         }
         while (count($matches) > 2) {
-            switch ($matches[1]) {
-                case '+':
-                    $result = $matches[0] + $matches[2];
-
-                    break;
-
-                case '-':
-                    $result = $matches[0] - $matches[2];
-
-                    break;
-            }
-
-            unset($matches[0],$matches[1],$matches[2]);
-            array_unshift($matches, $result);
+            $matches = $this->calculateOperator('/', $matches);
+            $matches = $this->calculateOperator('*', $matches);
+            $matches = $this->calculateOperator('+', $matches);
+            $matches = $this->calculateOperator('-', $matches);
         }
 
         return $matches[0];
@@ -44,5 +33,20 @@ class StringCalculator
     private function validateString(array $matches): bool
     {
         return count($matches) >= 3;
+    }
+
+    private function calculateOperator(string $operator, array $matches): array
+    {
+        while (in_array($operator, $matches)) {
+            $index = array_search($operator, $matches);
+
+            $result = eval('return '.$matches[$index - 1].$operator.$matches[$index + 1].';');
+            unset($matches[$index - 1],$matches[$index + 1]);
+            $matches[$index] = $result;
+
+            $matches = array_values($matches);
+        }
+
+        return $matches;
     }
 }

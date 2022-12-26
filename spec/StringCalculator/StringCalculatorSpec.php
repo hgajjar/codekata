@@ -28,4 +28,9 @@ class StringCalculatorSpec extends ObjectBehavior
     {
         $this->calculate('1 + 19 - 2')->shouldReturn(18);
     }
+
+    public function it_can_perform_full_calculation()
+    {
+        $this->calculate('1 + 19 - 2 * 3 / 2 * 9 / 3')->shouldReturn(11);
+    }
 }
